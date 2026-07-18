@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Marche placeholder</title>
+  <desc id="desc">Temporary placeholder image for market event content.</desc>
+  <rect width="1200" height="900" fill="#f6f1e8" />
+  <path d="M180 520 L340 280 L500 520 Z" fill="#d5c0a0" />
+  <path d="M430 520 L600 220 L770 520 Z" fill="#b9ccb4" />
+  <path d="M700 520 L860 300 L1020 520 Z" fill="#decfb9" />
+  <rect x="180" y="520" width="160" height="150" fill="#ffffff" opacity="0.8" />
+  <rect x="430" y="520" width="340" height="150" fill="#ffffff" opacity="0.8" />
+  <rect x="860" y="520" width="160" height="150" fill="#ffffff" opacity="0.8" />
+  <text x="600" y="744" text-anchor="middle" font-size="54" font-family="Georgia, 'Times New Roman', serif" fill="#314031">en-machi</text>
+  <text x="600" y="798" text-anchor="middle" font-size="24" font-family="Inter, Arial, sans-serif" letter-spacing="6" fill="#4a5c4a">MARCHE</text>
+</svg>

@@ -1,0 +1,25 @@
+---
+import ShopDetail from '@/pages/ShopDetail';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllShops } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const shops = await getAllShops();
+
+  return shops.map((shop) => ({
+    params: { slug: shop.frontmatter.slug },
+    props: { shop },
+  }));
+}
+
+const shop = Astro.props.shop;
+const slug = shop?.frontmatter.slug ?? Astro.params.slug!;
+---
+
+<BaseLayout
+  title={shop?.frontmatter.name ?? '店舗情報'}
+  description={shop?.frontmatter.excerpt}
+  image={shop?.frontmatter.image}
+>
+  <ShopDetail client:load currentPath={`/shops/${slug}`} shop={shop} />
+</BaseLayout>

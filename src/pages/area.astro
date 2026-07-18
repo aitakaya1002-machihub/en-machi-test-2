@@ -1,0 +1,26 @@
+---
+import Area from '@/pages/Area';
+import { getAllEvents, getAllNotices, getAllShops, getAllStories } from '../lib/content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const [stories, shops, events, notices] = await Promise.all([
+  getAllStories(),
+  getAllShops(),
+  getAllEvents(),
+  getAllNotices(),
+]);
+---
+
+<BaseLayout
+  title="円町を知る"
+  description="京都市中京区・上京区にまたがる円町エリア。JR円町駅を中心に、住宅街と商店街が広がる静かなまちです。"
+>
+  <Area
+    client:load
+    currentPath="/area"
+    stories={stories}
+    shops={shops}
+    events={events}
+    notices={notices}
+  />
+</BaseLayout>

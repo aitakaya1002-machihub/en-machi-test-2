@@ -1,0 +1,14 @@
+---
+import Shops from '@/pages/Shops';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllShops } from '../../lib/content';
+
+const shops = await getAllShops();
+---
+
+<BaseLayout
+  title="お店を探す"
+  description="円町エリアのお店をご紹介します。飲食店や小売店など、地域のおすすめを探せます。"
+>
+  <Shops client:load currentPath="/shops" shops={shops} />
+</BaseLayout>

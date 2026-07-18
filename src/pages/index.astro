@@ -1,0 +1,23 @@
+---
+import Home from '@/pages/Home';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAllEvents, getAllNotices, getAllStories, getFeaturedShops } from '../lib/content';
+
+const [stories, shops, events, notices] = await Promise.all([
+  getAllStories(),
+  getFeaturedShops(),
+  getAllEvents(),
+  getAllNotices(),
+]);
+---
+
+<BaseLayout>
+  <Home
+    client:load
+    currentPath="/"
+    stories={stories.slice(0, 3)}
+    shops={shops.slice(0, 4)}
+    events={events.slice(0, 3)}
+    notices={notices.slice(0, 3)}
+  />
+</BaseLayout>

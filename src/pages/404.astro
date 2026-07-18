@@ -1,0 +1,8 @@
+---
+import NotFound from '@/pages/NotFound';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404" description="お探しのページは見つかりませんでした。" noindex>
+  <NotFound client:load />
+</BaseLayout>

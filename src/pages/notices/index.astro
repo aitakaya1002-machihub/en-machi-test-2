@@ -1,0 +1,14 @@
+---
+import Notices from '@/pages/Notices';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllNotices } from '../../lib/content';
+
+const notices = await getAllNotices();
+---
+
+<BaseLayout
+  title="お知らせ"
+  description="en-machiからのお知らせ一覧です。掲載情報や運営からの案内を確認できます。"
+>
+  <Notices client:load currentPath="/notices" notices={notices} />
+</BaseLayout>

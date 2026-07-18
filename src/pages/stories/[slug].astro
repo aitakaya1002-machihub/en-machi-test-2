@@ -1,0 +1,26 @@
+---
+import StoryDetail from '@/pages/StoryDetail';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllStories } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const stories = await getAllStories();
+
+  return stories.map((story) => ({
+    params: { slug: story.frontmatter.slug },
+    props: { story },
+  }));
+}
+
+const story = Astro.props.story;
+const slug = story?.frontmatter.slug ?? Astro.params.slug!;
+---
+
+<BaseLayout
+  title={story?.frontmatter.title ?? 'ストーリー'}
+  description={story?.frontmatter.excerpt}
+  image={story?.frontmatter.image}
+  type="article"
+>
+  <StoryDetail client:load currentPath={`/stories/${slug}`} story={story} />
+</BaseLayout>

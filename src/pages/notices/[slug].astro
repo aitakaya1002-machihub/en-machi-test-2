@@ -1,0 +1,25 @@
+---
+import NoticeDetail from '@/pages/NoticeDetail';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllNotices } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const notices = await getAllNotices();
+
+  return notices.map((notice) => ({
+    params: { slug: notice.frontmatter.slug },
+    props: { notice },
+  }));
+}
+
+const notice = Astro.props.notice;
+const slug = notice?.frontmatter.slug ?? Astro.params.slug!;
+---
+
+<BaseLayout
+  title={notice?.frontmatter.title ?? 'お知らせ'}
+  description={notice?.frontmatter.excerpt}
+  type="article"
+>
+  <NoticeDetail client:load currentPath={`/notices/${slug}`} notice={notice} />
+</BaseLayout>

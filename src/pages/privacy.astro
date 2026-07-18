@@ -1,0 +1,11 @@
+---
+import Privacy from '@/pages/Privacy';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="プライバシーポリシー"
+  description="en-machiのプライバシーポリシーです。個人情報の取り扱い方針についてご案内しています。"
+>
+  <Privacy client:load currentPath="/privacy" />
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+import EventDetail from '@/pages/EventDetail';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllEvents } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const events = await getAllEvents();
+
+  return events.map((event) => ({
+    params: { slug: event.frontmatter.slug },
+    props: { event },
+  }));
+}
+
+const event = Astro.props.event;
+const slug = event?.frontmatter.slug ?? Astro.params.slug!;
+---
+
+<BaseLayout
+  title={event?.frontmatter.title ?? 'イベント情報'}
+  description={event?.frontmatter.excerpt}
+  image={event?.frontmatter.image}
+  type="article"
+>
+  <EventDetail client:load currentPath={`/events/${slug}`} event={event} />
+</BaseLayout>

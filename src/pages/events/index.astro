@@ -1,0 +1,14 @@
+---
+import Events from '@/pages/Events';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllEvents } from '../../lib/content';
+
+const events = await getAllEvents();
+---
+
+<BaseLayout
+  title="イベント"
+  description="円町エリアで開催されるイベント情報の一覧です。"
+>
+  <Events client:load currentPath="/events" events={events} />
+</BaseLayout>

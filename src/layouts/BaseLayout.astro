@@ -1,0 +1,81 @@
+---
+import '@/index.css';
+import { DEFAULT_DESCRIPTION, buildPageTitle, SITE_NAME } from '../lib/seo';
+import { getSearchItems } from '../lib/search-index';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  image,
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = buildPageTitle(title);
+const baseUrl = Astro.site ?? Astro.url;
+const canonicalUrl = new URL(Astro.url.pathname, baseUrl).toString();
+const metaImage = image ? new URL(image, baseUrl).toString() : undefined;
+const analyticsEndpoint =
+  (import.meta.env['PUBLIC_ANALYTICS_ENDPOINT'] as string | undefined) ??
+  (import.meta.env['VITE_ANALYTICS_ENDPOINT'] as string | undefined);
+const analyticsWebsiteId =
+  (import.meta.env['PUBLIC_ANALYTICS_WEBSITE_ID'] as string | undefined) ??
+  (import.meta.env['VITE_ANALYTICS_WEBSITE_ID'] as string | undefined);
+const searchItems = await getSearchItems();
+const serializedSearchItems = JSON.stringify(searchItems).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content={metaImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    {metaImage && <meta property="og:image" content={metaImage} />}
+    {metaImage && <meta name="twitter:image" content={metaImage} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+  </head>
+  <body>
+    <slot />
+    <script
+      is:inline
+      type="application/json"
+      id="site-search-index"
+      set:html={serializedSearchItems}
+    ></script>
+    {analyticsEndpoint && analyticsWebsiteId && (
+      <script
+        is:inline
+        defer
+        src={`${analyticsEndpoint.replace(/\/$/, '')}/umami`}
+        data-website-id={analyticsWebsiteId}
+      />
+    )}
+  </body>
+</html>

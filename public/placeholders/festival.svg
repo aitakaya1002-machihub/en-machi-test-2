@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Festival placeholder</title>
+  <desc id="desc">Temporary placeholder image for cultural event content.</desc>
+  <rect width="1200" height="900" fill="#eef4ee" />
+  <circle cx="600" cy="370" r="220" fill="#d7e4d4" />
+  <circle cx="600" cy="370" r="150" fill="#ffffff" opacity="0.85" />
+  <path d="M600 120 V620" stroke="#4a5c4a" stroke-opacity="0.24" stroke-width="8" stroke-linecap="round" />
+  <path d="M350 370 H850" stroke="#4a5c4a" stroke-opacity="0.24" stroke-width="8" stroke-linecap="round" />
+  <path d="M430 200 L770 540" stroke="#4a5c4a" stroke-opacity="0.16" stroke-width="8" stroke-linecap="round" />
+  <path d="M430 540 L770 200" stroke="#4a5c4a" stroke-opacity="0.16" stroke-width="8" stroke-linecap="round" />
+  <text x="600" y="734" text-anchor="middle" font-size="54" font-family="Georgia, 'Times New Roman', serif" fill="#314031">en-machi</text>
+  <text x="600" y="788" text-anchor="middle" font-size="24" font-family="Inter, Arial, sans-serif" letter-spacing="6" fill="#4a5c4a">EVENT</text>
+</svg>

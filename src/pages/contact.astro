@@ -1,0 +1,11 @@
+---
+import Contact from '@/pages/Contact';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="お問い合わせ"
+  description="en-machiへのお問い合わせフォームです。掲載に関するご相談や取材依頼などを受け付けています。"
+>
+  <Contact client:load currentPath="/contact" />
+</BaseLayout>

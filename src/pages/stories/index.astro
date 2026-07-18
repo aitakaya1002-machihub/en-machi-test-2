@@ -1,0 +1,14 @@
+---
+import Stories from '@/pages/Stories';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllStories } from '../../lib/content';
+
+const stories = await getAllStories();
+---
+
+<BaseLayout
+  title="ローカルストーリー"
+  description="円町の人・店・場所の背景にある物語を紹介する一覧ページです。"
+>
+  <Stories client:load currentPath="/stories" stories={stories} />
+</BaseLayout>

@@ -1,0 +1,12 @@
+---
+import ContactThanks from '@/pages/ContactThanks';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="お問い合わせありがとうございました"
+  description="en-machiへのお問い合わせ送信が完了しました。"
+  noindex
+>
+  <ContactThanks client:load currentPath="/contact/thanks" />
+</BaseLayout>
