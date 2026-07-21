@@ -1,7 +1,15 @@
 ---
-import Area from '@/pages/Area';
+import AreaCategoryFilter from '@/components/AreaCategoryFilter';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import EventCard from '@/components/EventCard';
+import Link from '@/components/Link';
+import PageHeader from '@/components/PageHeader';
+import SectionHeading from '@/components/SectionHeading';
+import ShopCard from '@/components/ShopCard';
+import StoryCard from '@/components/StoryCard';
 import { getAllEvents, getAllNotices, getAllShops, getAllStories } from '../lib/content';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { MapPin } from 'lucide-react';
 
 const [stories, shops, events, notices] = await Promise.all([
   getAllStories(),
@@ -9,18 +17,132 @@ const [stories, shops, events, notices] = await Promise.all([
   getAllEvents(),
   getAllNotices(),
 ]);
+
+const categories = [
+  { label: '食べる', icon: '🍽' },
+  { label: '買う', icon: '🛍' },
+  { label: '泊まる', icon: '🏠' },
+  { label: 'つくる', icon: '✂' },
+  { label: 'めぐる', icon: '👣' },
+  { label: '暮らす', icon: '🌿' },
+];
+
+const sortedShops = [...shops].sort(
+  (a, b) => (b.frontmatter.featured ? 1 : 0) - (a.frontmatter.featured ? 1 : 0),
+);
+
+function joinValues(values: string[]) {
+  return values.join('||');
+}
 ---
 
-<BaseLayout
+<SiteLayout
   title="円町を知る"
   description="京都市中京区・上京区にまたがる円町エリア。JR円町駅を中心に、住宅街と商店街が広がる静かなまちです。"
+  currentPath="/area"
 >
-  <Area
-    client:load
-    currentPath="/area"
-    stories={stories}
-    shops={shops}
-    events={events}
-    notices={notices}
-  />
-</BaseLayout>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <Breadcrumbs items={[{ label: '円町を知る' }]} />
+    <PageHeader
+      title="円町を知る"
+      description="京都市中京区・上京区にまたがる円町エリア。JR円町駅を中心に、住宅街と商店街が広がる静かなまちです。"
+    />
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+      <div class="bg-gray-50 rounded-sm p-8 flex flex-col items-center justify-center min-h-[300px] border border-gray-100">
+        <MapPin size={48} className="text-[#4a5c4a] mb-4" />
+        <p class="text-sm text-gray-600 text-center mb-4">
+          円町エリアの見どころを
+          <br />
+          マップでご紹介します。
+        </p>
+        <p class="text-xs text-gray-400 text-center">（マップ機能は今後実装予定です）</p>
+      </div>
+
+      <AreaCategoryFilter client:load scopeId="area-results-scope" categories={categories} />
+    </div>
+
+    <section id="area-results-scope" class="mt-12 lg:mt-16">
+      <SectionHeading title="カテゴリーを選んで探す" />
+      <p data-area-count-row hidden class="text-sm text-gray-600 mb-6">
+        該当するコンテンツは
+        <span data-area-count class="mx-1 font-medium text-[#4a5c4a]">0</span>
+        件です。
+      </p>
+      <div data-area-intro class="rounded-sm border border-dashed border-gray-200 bg-gray-50 px-5 py-8 text-sm text-gray-500">
+        上の6分類から気になるテーマを選ぶと、関連するお店・イベント・ストーリー・お知らせが表示されます。
+      </div>
+      <div data-area-empty hidden class="rounded-sm border border-dashed border-gray-200 bg-gray-50 px-5 py-8 text-sm text-gray-500">
+        この分類に紐づくコンテンツはまだありません。
+      </div>
+
+      <section data-area-section hidden class="mb-12">
+        <SectionHeading title="お店" href="/shops" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {sortedShops.map((item) => (
+            <div data-area-item data-area-categories={joinValues(item.frontmatter.areaCategories)} hidden>
+              <ShopCard shop={item.frontmatter} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-area-section hidden class="mb-12">
+        <SectionHeading title="ストーリー" href="/stories" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {stories.map((item) => (
+            <div data-area-item data-area-categories={joinValues(item.frontmatter.areaCategories)} hidden>
+              <StoryCard story={item.frontmatter} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-area-section hidden class="mb-12">
+        <SectionHeading title="イベント" href="/events" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {events.map((item) => (
+            <div data-area-item data-area-categories={joinValues(item.frontmatter.areaCategories)} hidden>
+              <EventCard event={item.frontmatter} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-area-section hidden>
+        <SectionHeading title="お知らせ" href="/notices" />
+        <div class="space-y-4">
+          {notices.map((item) => (
+            <div data-area-item data-area-categories={joinValues(item.frontmatter.areaCategories)} hidden>
+              <Link
+                href={`/notices/${item.frontmatter.slug}`}
+                className="block p-4 border border-gray-100 rounded-sm hover:bg-gray-50 transition-colors"
+              >
+                <div class="flex items-center gap-3 text-xs text-gray-500 mb-1">
+                  <span>{item.frontmatter.date}</span>
+                  <span class="px-2 py-0.5 bg-gray-100 rounded-full">{item.frontmatter.category}</span>
+                </div>
+                <h3 class="text-sm font-medium mb-1">{item.frontmatter.title}</h3>
+                {item.frontmatter.excerpt && (
+                  <p class="text-xs text-gray-500 leading-relaxed">{item.frontmatter.excerpt}</p>
+                )}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+    </section>
+
+    <div class="mt-12 max-w-2xl">
+      <h2 class="text-base font-medium mb-4">円町エリアについて</h2>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">
+        円町は、京都市の西部に位置する住宅街です。JR嵯峨野線「円町」駅があり、京都駅から約10分。
+        観光地としての華やかさはありませんが、地域に根ざした個人店や、静かな暮らしの風景が広がっています。
+      </p>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        北野天満宮や金閣寺へのアクセスも良く、観光の拠点としても注目されつつあるエリアです。
+        en-machiでは、そんな円町の日常にある魅力を発信しています。
+      </p>
+    </div>
+  </div>
+</SiteLayout>

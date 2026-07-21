@@ -37,7 +37,7 @@ const staticItems: SearchItem[] = [
   },
   {
     title: 'machi-hubについて',
-    href: '/machi-hub',
+    href: '/about',
     section: '固定ページ',
     description: '運営会社 machi-hub についてご紹介します。',
     keywords: ['about', 'company', '運営'],

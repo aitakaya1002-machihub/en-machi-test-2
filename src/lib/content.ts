@@ -64,6 +64,7 @@ const microcmsServiceDomain = normalizeMicrocmsServiceDomain(
 );
 const microcmsApiKey = import.meta.env.MICROCMS_API_KEY;
 const hasMicrocmsConfig = Boolean(microcmsServiceDomain && microcmsApiKey);
+let microcmsUnavailable = false;
 
 function asString(value: unknown, fallback = ''): string {
   if (typeof value === 'string') {
@@ -209,9 +210,17 @@ async function loadCollection<T>(
   files: Record<string, string>,
   normalize: (entry: RawContent) => ContentItem<T>,
 ): Promise<ContentItem<T>[]> {
-  if (hasMicrocmsConfig) {
-    const contents = await fetchMicrocmsList(endpoint);
-    return contents.map(normalize);
+  if (hasMicrocmsConfig && !microcmsUnavailable) {
+    try {
+      const contents = await fetchMicrocmsList(endpoint);
+      return contents.map(normalize);
+    } catch (error) {
+      microcmsUnavailable = true;
+      console.warn(
+        '[content] Failed to fetch data from microCMS. Falling back to local markdown content for this build.',
+        error,
+      );
+    }
   }
 
   return parseMarkdownFiles(files, normalize);
@@ -220,6 +229,10 @@ async function loadCollection<T>(
 function getTimestamp(date: string): number {
   const timestamp = Date.parse(date);
   return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function onlyPublished<T extends { frontmatter: { published: boolean } }>(items: T[]): T[] {
+  return items.filter((item) => item.frontmatter.published !== false);
 }
 
 function normalizeStory(entry: RawContent): ContentItem<StoryFrontmatter> {
@@ -321,13 +334,14 @@ function normalizeNotice(entry: RawContent): ContentItem<NoticeFrontmatter> {
 
 export async function getAllStories(): Promise<ContentItem<StoryFrontmatter>[]> {
   const stories = await loadCollection('stories', storyFiles, normalizeStory);
-  return stories.sort(
+  return onlyPublished(stories).sort(
     (a, b) => getTimestamp(b.frontmatter.date) - getTimestamp(a.frontmatter.date),
   );
 }
 
 export async function getAllShops(): Promise<ContentItem<ShopFrontmatter>[]> {
-  return loadCollection('shops', shopFiles, normalizeShop);
+  const shops = await loadCollection('shops', shopFiles, normalizeShop);
+  return onlyPublished(shops);
 }
 
 export async function getFeaturedShops(): Promise<ContentItem<ShopFrontmatter>[]> {
@@ -337,14 +351,14 @@ export async function getFeaturedShops(): Promise<ContentItem<ShopFrontmatter>[]
 
 export async function getAllEvents(): Promise<ContentItem<EventFrontmatter>[]> {
   const events = await loadCollection('events', eventFiles, normalizeEvent);
-  return events.sort(
+  return onlyPublished(events).sort(
     (a, b) => getTimestamp(a.frontmatter.date) - getTimestamp(b.frontmatter.date),
   );
 }
 
 export async function getAllNotices(): Promise<ContentItem<NoticeFrontmatter>[]> {
   const notices = await loadCollection('notices', noticeFiles, normalizeNotice);
-  return notices.sort(
+  return onlyPublished(notices).sort(
     (a, b) => getTimestamp(b.frontmatter.date) - getTimestamp(a.frontmatter.date),
   );
 }

@@ -1,7 +1,11 @@
 ---
-import StoryDetail from '@/pages/StoryDetail';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from '@/components/Link';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getAllStories } from '../../lib/content';
+import { ORGANIZATION_NAME } from '../../lib/seo';
+import { ArrowLeft } from 'lucide-react';
 
 export async function getStaticPaths() {
   const stories = await getAllStories();
@@ -14,13 +18,95 @@ export async function getStaticPaths() {
 
 const story = Astro.props.story;
 const slug = story?.frontmatter.slug ?? Astro.params.slug!;
+const baseUrl = Astro.site ?? Astro.url;
+const siteUrl = new URL('/', baseUrl).toString();
+const canonicalUrl = new URL(`/stories/${slug}`, baseUrl).toString();
+const storyImage = story?.frontmatter.image
+  ? new URL(story.frontmatter.image, baseUrl).toString()
+  : undefined;
+const storyStructuredData = story
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      '@id': `${canonicalUrl}#article`,
+      headline: story.frontmatter.title,
+      description: story.frontmatter.excerpt,
+      ...(storyImage ? { image: [storyImage] } : {}),
+      datePublished: story.frontmatter.date,
+      author: story.frontmatter.author
+        ? {
+            '@type': 'Person',
+            name: story.frontmatter.author,
+          }
+        : {
+            '@id': `${siteUrl}#organization`,
+          },
+      publisher: {
+        '@id': `${siteUrl}#organization`,
+      },
+      mainEntityOfPage: canonicalUrl,
+      inLanguage: 'ja-JP',
+      articleSection: story.frontmatter.category,
+      ...(story.frontmatter.tags.length > 0
+        ? {
+            keywords: story.frontmatter.tags.join(', '),
+          }
+        : {}),
+    }
+  : undefined;
 ---
 
-<BaseLayout
+<SiteLayout
   title={story?.frontmatter.title ?? 'ストーリー'}
   description={story?.frontmatter.excerpt}
   image={story?.frontmatter.image}
   type="article"
+  publishedTime={story?.frontmatter.date}
+  structuredData={storyStructuredData}
+  currentPath={`/stories/${slug}`}
 >
-  <StoryDetail client:load currentPath={`/stories/${slug}`} story={story} />
-</BaseLayout>
+  {story ? (
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <Breadcrumbs items={[{ label: 'ストーリー', href: '/stories' }, { label: story.frontmatter.title }]} />
+
+      {story.frontmatter.image && (
+        <div class="aspect-[16/9] overflow-hidden rounded-sm mb-8">
+          <img src={story.frontmatter.image} alt={story.frontmatter.title} class="w-full h-full object-cover" />
+        </div>
+      )}
+
+      <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+        <span class="px-2 py-0.5 bg-gray-100 rounded-full">{story.frontmatter.category}</span>
+        <span>{story.frontmatter.date}</span>
+        {story.frontmatter.author && <span>by {story.frontmatter.author}</span>}
+        {!story.frontmatter.author && <span>by {ORGANIZATION_NAME}</span>}
+      </div>
+
+      <h1 class="text-2xl lg:text-3xl font-medium mb-6 leading-tight">{story.frontmatter.title}</h1>
+
+      {story.frontmatter.tags && story.frontmatter.tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mb-8">
+          {story.frontmatter.tags.map((tag) => (
+            <span class="text-xs text-gray-500">#{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <MarkdownRenderer content={story.content} />
+
+      <div class="mt-12 pt-8 border-t border-gray-100">
+        <Link href="/stories" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#4a5c4a] transition-colors">
+          <ArrowLeft size={14} />
+          ストーリー一覧へ戻る
+        </Link>
+      </div>
+    </article>
+  ) : (
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+      <p class="text-gray-500">記事が見つかりませんでした。</p>
+      <Link href="/stories" className="text-sm text-[#4a5c4a] mt-4 inline-block">
+        ストーリー一覧へ戻る
+      </Link>
+    </div>
+  )}
+</SiteLayout>

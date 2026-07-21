@@ -1,7 +1,10 @@
 ---
-import EventDetail from '@/pages/EventDetail';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from '@/components/Link';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getAllEvents } from '../../lib/content';
+import { ArrowLeft, Calendar, Clock, MapPin, Ticket, User } from 'lucide-react';
 
 export async function getStaticPaths() {
   const events = await getAllEvents();
@@ -14,13 +17,138 @@ export async function getStaticPaths() {
 
 const event = Astro.props.event;
 const slug = event?.frontmatter.slug ?? Astro.params.slug!;
+const baseUrl = Astro.site ?? Astro.url;
+const siteUrl = new URL('/', baseUrl).toString();
+const canonicalUrl = new URL(`/events/${slug}`, baseUrl).toString();
+const eventImage = event?.frontmatter.image
+  ? new URL(event.frontmatter.image, baseUrl).toString()
+  : undefined;
+
+function buildEventDate(date?: string, time?: string) {
+  if (!date) {
+    return undefined;
+  }
+
+  if (!time) {
+    return `${date}T00:00:00+09:00`;
+  }
+
+  return `${date}T${time}:00+09:00`;
+}
+
+const eventStructuredData = event
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      '@id': `${canonicalUrl}#event`,
+      name: event.frontmatter.title,
+      description: event.frontmatter.excerpt,
+      ...(eventImage ? { image: [eventImage] } : {}),
+      startDate: buildEventDate(event.frontmatter.date, event.frontmatter.startTime),
+      endDate: buildEventDate(event.frontmatter.date, event.frontmatter.endTime),
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      location: {
+        '@type': 'Place',
+        name: event.frontmatter.place,
+        address: event.frontmatter.address || event.frontmatter.place,
+      },
+      organizer: event.frontmatter.organizer
+        ? {
+            '@type': 'Organization',
+            name: event.frontmatter.organizer,
+          }
+        : {
+            '@id': `${siteUrl}#organization`,
+          },
+      ...(event.frontmatter.fee
+        ? {
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'JPY',
+              availability: 'https://schema.org/InStock',
+              description: event.frontmatter.fee,
+              url: canonicalUrl,
+            },
+          }
+        : {}),
+      mainEntityOfPage: canonicalUrl,
+      inLanguage: 'ja-JP',
+    }
+  : undefined;
 ---
 
-<BaseLayout
+<SiteLayout
   title={event?.frontmatter.title ?? 'イベント情報'}
   description={event?.frontmatter.excerpt}
   image={event?.frontmatter.image}
-  type="article"
+  structuredData={eventStructuredData}
+  currentPath={`/events/${slug}`}
 >
-  <EventDetail client:load currentPath={`/events/${slug}`} event={event} />
-</BaseLayout>
+  {event ? (
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <Breadcrumbs items={[{ label: 'イベント', href: '/events' }, { label: event.frontmatter.title }]} />
+
+      {event.frontmatter.image && (
+        <div class="aspect-[16/9] overflow-hidden rounded-sm mb-8">
+          <img src={event.frontmatter.image} alt={event.frontmatter.title} class="w-full h-full object-cover" />
+        </div>
+      )}
+
+      <div class="flex items-center gap-3 text-xs text-gray-500 mb-3">
+        <span class="px-2 py-0.5 bg-gray-100 rounded-full">{event.frontmatter.category}</span>
+      </div>
+
+      <h1 class="text-2xl lg:text-3xl font-medium mb-6">{event.frontmatter.title}</h1>
+
+      <div class="bg-gray-50 rounded-sm p-5 mb-8 space-y-3">
+        <div class="flex items-start gap-3 text-sm">
+          <Calendar size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+          <span class="text-gray-700">{event.frontmatter.date}</span>
+        </div>
+        <div class="flex items-start gap-3 text-sm">
+          <Clock size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+          <span class="text-gray-700">{event.frontmatter.startTime} − {event.frontmatter.endTime}</span>
+        </div>
+        <div class="flex items-start gap-3 text-sm">
+          <MapPin size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+          <span class="text-gray-700">{event.frontmatter.place}</span>
+        </div>
+        {event.frontmatter.fee && (
+          <div class="flex items-start gap-3 text-sm">
+            <Ticket size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+            <span class="text-gray-700">{event.frontmatter.fee}</span>
+          </div>
+        )}
+        {event.frontmatter.organizer && (
+          <div class="flex items-start gap-3 text-sm">
+            <User size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+            <span class="text-gray-700">{event.frontmatter.organizer}</span>
+          </div>
+        )}
+      </div>
+
+      <MarkdownRenderer content={event.content} />
+
+      <div class="mt-8 p-4 bg-amber-50 border border-amber-100 rounded-sm">
+        <p class="text-xs text-amber-800 leading-relaxed">
+          イベント内容は変更になる場合があります。最新情報は主催者の案内をご確認ください。
+        </p>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-gray-100">
+        <Link href="/events" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#4a5c4a] transition-colors">
+          <ArrowLeft size={14} />
+          イベント一覧へ戻る
+        </Link>
+      </div>
+    </article>
+  ) : (
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+      <p class="text-gray-500">イベント情報が見つかりませんでした。</p>
+      <Link href="/events" className="text-sm text-[#4a5c4a] mt-4 inline-block">
+        イベント一覧へ戻る
+      </Link>
+    </div>
+  )}
+</SiteLayout>

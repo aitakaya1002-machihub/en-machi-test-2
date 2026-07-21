@@ -1,7 +1,14 @@
 ---
-import Home from '@/pages/Home';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import EventCard from '@/components/EventCard';
+import HubBrandCards from '@/components/HubBrandCards';
+import Link from '@/components/Link';
+import SectionHeading from '@/components/SectionHeading';
+import ShopCard from '@/components/ShopCard';
+import StoryCard from '@/components/StoryCard';
+import HeroWordmark from '../components/HeroWordmark.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 import { getAllEvents, getAllNotices, getAllStories, getFeaturedShops } from '../lib/content';
+import { ArrowRight, MapPin } from 'lucide-react';
 
 const [stories, shops, events, notices] = await Promise.all([
   getAllStories(),
@@ -11,13 +18,224 @@ const [stories, shops, events, notices] = await Promise.all([
 ]);
 ---
 
-<BaseLayout>
-  <Home
-    client:load
-    currentPath="/"
-    stories={stories.slice(0, 3)}
-    shops={shops.slice(0, 4)}
-    events={events.slice(0, 3)}
-    notices={notices.slice(0, 3)}
-  />
-</BaseLayout>
+<SiteLayout currentPath="/">
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+      <div class="pt-4 lg:pt-8">
+        <div class="hero-accent-line mb-8"></div>
+        <HeroWordmark />
+        <p class="text-sm text-gray-600 leading-[1.9] mb-10 max-w-sm">
+          京都・円町エリアのローカル情報メディア。
+          <br />
+          まちのこと、お店のこと、人のこと。
+          <br />
+          訪れる人も、暮らす人も、
+          <br />
+          それぞれの&quot;円&quot;がつながる場所へ。
+        </p>
+        <Link
+          href="/area"
+          className="inline-flex items-center gap-2 text-sm text-[#4a5c4a] font-medium hover:gap-3 transition-all"
+        >
+          円町を知る <ArrowRight size={14} />
+        </Link>
+      </div>
+      <div class="relative">
+        <div class="aspect-[4/3] overflow-hidden rounded-sm">
+          <img
+            src="/placeholders/enmachi-hero-street.webp"
+            alt="円町の日常風景"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm p-4 rounded-sm shadow-sm border border-[#4a5c4a]/10 max-w-[200px]">
+          <div class="flex items-center gap-2 mb-1.5">
+            <MapPin size={13} className="text-[#4a5c4a]" />
+            <span class="text-xs font-medium text-[#4a5c4a]">エリアマップ</span>
+          </div>
+          <p class="text-[10px] text-gray-500 leading-relaxed">
+            円町の見どころを
+            <br />
+            マップで見る
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center gap-3">
+      <div class="flex-1 h-px bg-gray-200"></div>
+      <div class="w-2 h-2 rounded-full border border-[#4a5c4a]/40"></div>
+      <div class="flex-1 h-px bg-gray-200"></div>
+    </div>
+  </div>
+
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <SectionHeading title="ローカルストーリー" href="/stories" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {stories.slice(0, 3).map((item) => (
+        <StoryCard story={item.frontmatter} />
+      ))}
+    </div>
+  </section>
+
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center gap-3">
+      <div class="flex-1 h-px bg-gray-200"></div>
+      <div class="w-2 h-2 rounded-full border border-[#4a5c4a]/40"></div>
+      <div class="flex-1 h-px bg-gray-200"></div>
+    </div>
+  </div>
+
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+      <div class="lg:col-span-1">
+        <SectionHeading title="エリアマップ" href="/area" linkText="マップを見る" />
+        <div class="bg-[#f8f7f5] rounded-sm p-6 aspect-square flex flex-col items-center justify-center text-center border border-gray-100">
+          <div class="w-16 h-16 rounded-full border-2 border-[#4a5c4a]/30 flex items-center justify-center mb-4">
+            <MapPin size={24} className="text-[#4a5c4a]" />
+          </div>
+          <p class="text-xs text-gray-600 leading-relaxed mb-4">
+            お店やスポット、宿泊施設など
+            <br />
+            円町エリアの見どころをマップでご紹介。
+          </p>
+          <Link
+            href="/area"
+            className="inline-flex items-center gap-1 text-xs text-[#4a5c4a] font-medium hover:gap-2 transition-all"
+          >
+            マップを見る <ArrowRight size={12} />
+          </Link>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        <SectionHeading title="注目のお店" href="/shops" />
+        <div class="grid grid-cols-2 gap-4 lg:gap-6">
+          {shops.slice(0, 4).map((item) => (
+            <ShopCard shop={item.frontmatter} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center gap-3">
+      <div class="flex-1 h-px bg-gray-200"></div>
+      <div class="w-2 h-2 rounded-full border border-[#4a5c4a]/40"></div>
+      <div class="flex-1 h-px bg-gray-200"></div>
+    </div>
+  </div>
+
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <SectionHeading title="イベント" href="/events" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {events.slice(0, 3).map((item) => (
+        <EventCard event={item.frontmatter} />
+      ))}
+    </div>
+  </section>
+
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center gap-3">
+      <div class="flex-1 h-px bg-gray-200"></div>
+      <div class="w-2 h-2 rounded-full border border-[#4a5c4a]/40"></div>
+      <div class="flex-1 h-px bg-gray-200"></div>
+    </div>
+  </div>
+
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <SectionHeading title="お知らせ" href="/notices" />
+    <div class="space-y-4">
+      {notices.slice(0, 3).map((item) => (
+        <Link
+          href={`/notices/${item.frontmatter.slug}`}
+          className="block p-4 border border-gray-100 rounded-sm hover:bg-gray-50 transition-colors"
+        >
+          <div class="flex items-center gap-3 text-xs text-gray-500 mb-1">
+            <span>{item.frontmatter.date}</span>
+            <span class="px-2 py-0.5 bg-gray-100 rounded-full">{item.frontmatter.category}</span>
+          </div>
+          <h3 class="text-sm font-medium mb-1">{item.frontmatter.title}</h3>
+          {item.frontmatter.excerpt && (
+            <p class="text-xs text-gray-500 leading-relaxed">{item.frontmatter.excerpt}</p>
+          )}
+        </Link>
+      ))}
+    </div>
+  </section>
+
+  <HubBrandCards />
+
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+    <div class="flex items-start gap-6">
+      <div class="w-px h-16 bg-[#4a5c4a]/40 flex-shrink-0 mt-1"></div>
+      <div>
+        <h2 class="text-lg font-medium mb-4" style='font-family: "Noto Serif JP", serif;'>en-machiについて</h2>
+        <p class="text-sm text-gray-600 leading-[1.9] max-w-2xl">
+          en-machiは、株式会社machi-hubが運営する円町周辺エリアのローカルポータルです。
+          お店、人、場所、イベント、滞在情報を通して、円町の日常にある魅力を発信していきます。
+          暮らす人にとっては、まちを再発見するきっかけに。
+          訪れる人にとっては、地域とつながる入口に。
+          en-machiは、円町に生まれるさまざまな&quot;縁&quot;をつなぐメディアです。
+        </p>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .hero-accent-line {
+    position: relative;
+    width: 1px;
+    height: 3rem;
+    overflow: hidden;
+    background: rgba(74, 92, 74, 0.18);
+  }
+
+  .hero-accent-line::after {
+    content: "";
+    position: absolute;
+    inset: -50% 0 0 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(74, 92, 74, 0.78);
+    animation: hero-accent-flow 3200ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes hero-accent-flow {
+    0% {
+      opacity: 0;
+      transform: translateY(-115%);
+    }
+
+    22% {
+      opacity: 0.82;
+    }
+
+    58% {
+      opacity: 0.82;
+      transform: translateY(58%);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(150%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-accent-line {
+      opacity: 0.6;
+    }
+
+    .hero-accent-line::after {
+      animation: none;
+      opacity: 0.75;
+      transform: translateY(24%);
+    }
+  }
+</style>

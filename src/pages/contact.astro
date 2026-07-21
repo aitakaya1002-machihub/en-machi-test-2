@@ -1,11 +1,21 @@
 ---
-import Contact from '@/pages/Contact';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import PageHeader from '@/components/PageHeader';
+import ContactForm from '@/components/ContactForm';
+import SiteLayout from '../layouts/SiteLayout.astro';
 ---
 
-<BaseLayout
+<SiteLayout
   title="お問い合わせ"
   description="en-machiへのお問い合わせフォームです。掲載に関するご相談や取材依頼などを受け付けています。"
+  currentPath="/contact"
 >
-  <Contact client:load currentPath="/contact" />
-</BaseLayout>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <Breadcrumbs items={[{ label: 'お問い合わせ' }]} />
+    <PageHeader
+      title="お問い合わせ"
+      description="en-machiへのお問い合わせは、以下のフォームよりお送りください。"
+    />
+    <ContactForm client:load />
+  </div>
+</SiteLayout>

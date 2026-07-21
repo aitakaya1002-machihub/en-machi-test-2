@@ -1,0 +1,295 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">JR円町駅を中心にした半径約1kmの準地図寄りエリアマップ</title>
+  <desc id="desc">JR円町駅周辺の鉄道、主要道路、交差点、周辺エリア名、moto-machi と yado-machi の拠点位置を簡略化して示したSVGマップです。</desc>
+
+  <defs>
+    <linearGradient id="paper" x1="140" y1="120" x2="1060" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F4ED"/>
+      <stop offset="1" stop-color="#F1EEE6"/>
+    </linearGradient>
+    <filter id="cardShadow" x="0" y="0" width="1200" height="900" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#4A5C4A" flood-opacity=".08"/>
+    </filter>
+    <filter id="pinShadow" x="0" y="0" width="1200" height="900" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#4A5C4A" flood-opacity=".16"/>
+    </filter>
+    <style>
+      .jp {
+        fill: #445443;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+      .serif {
+        fill: #2F3C2E;
+        font-family: "Noto Serif JP", serif;
+      }
+      .block {
+        fill: #FCFBF8;
+        stroke: #E1DDD2;
+        stroke-width: 1.25;
+      }
+      .minor-road {
+        stroke: #D7D9D1;
+        stroke-width: 16;
+        stroke-linecap: round;
+      }
+      .minor-road-core {
+        stroke: #FFFFFF;
+        stroke-width: 6;
+        stroke-linecap: round;
+      }
+      .major-road {
+        stroke: #C6CCBE;
+        stroke-width: 32;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .major-road-core {
+        stroke: #FFFFFF;
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .rail {
+        stroke: #59705A;
+        stroke-width: 18;
+        stroke-linecap: round;
+      }
+      .rail-sleeper {
+        stroke: #DCE3DA;
+        stroke-width: 4;
+        stroke-linecap: round;
+      }
+      .ring {
+        fill: none;
+        stroke: #6C836B;
+        stroke-width: 1.5;
+        stroke-dasharray: 4 9;
+      }
+      .guide {
+        fill: none;
+        stroke: #B8C3B2;
+        stroke-width: 1.5;
+        stroke-dasharray: 3 7;
+      }
+    </style>
+  </defs>
+
+  <rect width="1200" height="900" fill="#ECE8DE"/>
+  <g filter="url(#cardShadow)">
+    <rect x="58" y="54" width="1084" height="792" rx="30" fill="url(#paper)"/>
+  </g>
+
+  <g id="base-grid">
+    <rect class="block" x="146" y="128" width="150" height="110" rx="18"/>
+    <rect class="block" x="318" y="128" width="182" height="110" rx="18"/>
+    <rect class="block" x="676" y="128" width="178" height="110" rx="18"/>
+    <rect class="block" x="874" y="128" width="176" height="110" rx="18"/>
+
+    <rect class="block" x="146" y="252" width="154" height="120" rx="18"/>
+    <rect class="block" x="320" y="252" width="176" height="120" rx="18"/>
+    <rect class="block" x="676" y="252" width="174" height="120" rx="18"/>
+    <rect class="block" x="870" y="252" width="180" height="120" rx="18"/>
+
+    <rect class="block" x="156" y="398" width="126" height="104" rx="18"/>
+    <rect class="block" x="308" y="398" width="146" height="104" rx="18"/>
+    <rect class="block" x="694" y="398" width="140" height="104" rx="18"/>
+    <rect class="block" x="858" y="398" width="164" height="104" rx="18"/>
+
+    <rect class="block" x="148" y="544" width="146" height="120" rx="18"/>
+    <rect class="block" x="316" y="544" width="174" height="120" rx="18"/>
+    <rect class="block" x="694" y="544" width="148" height="120" rx="18"/>
+    <rect class="block" x="862" y="544" width="164" height="120" rx="18"/>
+
+    <rect class="block" x="148" y="688" width="192" height="92" rx="18"/>
+    <rect class="block" x="360" y="688" width="154" height="92" rx="18"/>
+    <rect class="block" x="678" y="688" width="170" height="92" rx="18"/>
+    <rect class="block" x="868" y="688" width="158" height="92" rx="18"/>
+  </g>
+
+  <g id="radius">
+    <circle class="ring" cx="562" cy="454" r="300"/>
+    <circle class="guide" cx="562" cy="454" r="150"/>
+  </g>
+
+  <g id="roads">
+    <path class="major-road" d="M522 112V790"/>
+    <path class="major-road-core" d="M522 112V790"/>
+
+    <path class="major-road" d="M112 314H1060"/>
+    <path class="major-road-core" d="M112 314H1060"/>
+
+    <path class="major-road" d="M116 550H1060"/>
+    <path class="major-road-core" d="M116 550H1060"/>
+
+    <path class="minor-road" d="M120 228H1054"/>
+    <path class="minor-road-core" d="M120 228H1054"/>
+
+    <path class="minor-road" d="M126 432H1048"/>
+    <path class="minor-road-core" d="M126 432H1048"/>
+
+    <path class="minor-road" d="M128 656H1048"/>
+    <path class="minor-road-core" d="M128 656H1048"/>
+
+    <path class="minor-road" d="M398 104V786"/>
+    <path class="minor-road-core" d="M398 104V786"/>
+
+    <path class="minor-road" d="M654 110V786"/>
+    <path class="minor-road-core" d="M654 110V786"/>
+
+    <path class="minor-road" d="M770 116V786"/>
+    <path class="minor-road-core" d="M770 116V786"/>
+
+    <path class="minor-road" d="M278 150C320 236 330 314 308 398C288 474 286 556 336 736"/>
+    <path class="minor-road-core" d="M278 150C320 236 330 314 308 398C288 474 286 556 336 736"/>
+
+    <path class="minor-road" d="M930 162C882 240 860 320 870 408C878 486 900 566 962 734"/>
+    <path class="minor-road-core" d="M930 162C882 240 860 320 870 408C878 486 900 566 962 734"/>
+  </g>
+
+  <g id="railway">
+    <path class="rail" d="M132 454H1054"/>
+    <path class="rail" d="M132 484H1054"/>
+    <path class="rail-sleeper" d="M186 469H202"/>
+    <path class="rail-sleeper" d="M232 469H248"/>
+    <path class="rail-sleeper" d="M278 469H294"/>
+    <path class="rail-sleeper" d="M324 469H340"/>
+    <path class="rail-sleeper" d="M370 469H386"/>
+    <path class="rail-sleeper" d="M416 469H432"/>
+    <path class="rail-sleeper" d="M462 469H478"/>
+    <path class="rail-sleeper" d="M508 469H524"/>
+    <path class="rail-sleeper" d="M554 469H570"/>
+    <path class="rail-sleeper" d="M600 469H616"/>
+    <path class="rail-sleeper" d="M646 469H662"/>
+    <path class="rail-sleeper" d="M692 469H708"/>
+    <path class="rail-sleeper" d="M738 469H754"/>
+    <path class="rail-sleeper" d="M784 469H800"/>
+    <path class="rail-sleeper" d="M830 469H846"/>
+    <path class="rail-sleeper" d="M876 469H892"/>
+    <path class="rail-sleeper" d="M922 469H938"/>
+    <path class="rail-sleeper" d="M968 469H984"/>
+  </g>
+
+  <g id="station" filter="url(#pinShadow)">
+    <circle cx="562" cy="469" r="28" fill="#4A5C4A"/>
+    <circle cx="562" cy="469" r="55" fill="#4A5C4A" fill-opacity=".08" stroke="#4A5C4A" stroke-opacity=".18"/>
+    <path d="M562 446C548.193 446 537 457.193 537 471C537 491.628 562 513.95 562 513.95C562 513.95 587 491.628 587 471C587 457.193 575.807 446 562 446Z" fill="#D7C8A7"/>
+    <circle cx="562" cy="471" r="7.5" fill="#4A5C4A"/>
+  </g>
+
+  <g id="hubs" filter="url(#pinShadow)">
+    <circle cx="430" cy="546" r="13" fill="#4A5C4A"/>
+    <circle cx="430" cy="546" r="25" fill="#4A5C4A" fill-opacity=".08" stroke="#4A5C4A" stroke-opacity=".18"/>
+
+    <circle cx="706" cy="606" r="13" fill="#4A5C4A"/>
+    <circle cx="706" cy="606" r="25" fill="#4A5C4A" fill-opacity=".08" stroke="#4A5C4A" stroke-opacity=".18"/>
+  </g>
+
+  <g id="intersections">
+    <circle cx="522" cy="314" r="7" fill="#FFFFFF" stroke="#5F745F" stroke-width="2"/>
+    <circle cx="522" cy="550" r="7" fill="#FFFFFF" stroke="#5F745F" stroke-width="2"/>
+    <circle cx="654" cy="314" r="7" fill="#FFFFFF" stroke="#5F745F" stroke-width="2"/>
+    <circle cx="398" cy="314" r="7" fill="#FFFFFF" stroke="#5F745F" stroke-width="2"/>
+    <circle cx="654" cy="550" r="7" fill="#FFFFFF" stroke="#5F745F" stroke-width="2"/>
+  </g>
+
+  <g id="landmarks">
+    <circle cx="522" cy="228" r="7" fill="#D7C8A7"/>
+    <circle cx="770" cy="314" r="7" fill="#D7C8A7"/>
+    <circle cx="398" cy="656" r="7" fill="#D7C8A7"/>
+    <circle cx="770" cy="656" r="7" fill="#D7C8A7"/>
+    <circle cx="284" cy="314" r="7" fill="#D7C8A7"/>
+  </g>
+
+  <g id="title-block">
+    <text class="serif" x="114" y="108" font-size="34">Enmachi Area Map</text>
+    <text class="jp" x="116" y="136" font-size="13" letter-spacing=".2em">JR円町駅から半径約1kmの簡易マップ</text>
+  </g>
+
+  <g id="road-labels">
+    <text class="jp" x="540" y="100" font-size="14" letter-spacing=".18em">西大路通</text>
+    <text class="jp" x="128" y="306" font-size="14" letter-spacing=".18em">丸太町通</text>
+    <text class="jp" x="128" y="542" font-size="14" letter-spacing=".18em">太子道</text>
+    <text class="jp" x="128" y="648" font-size="14" letter-spacing=".18em">御池通</text>
+    <text class="jp" x="134" y="424" font-size="13" letter-spacing=".16em">妙心寺道</text>
+    <text class="jp" x="680" y="102" font-size="13" letter-spacing=".16em">御前通</text>
+    <text class="jp" x="414" y="102" font-size="13" letter-spacing=".16em">天神道</text>
+    <text class="jp" x="786" y="102" font-size="13" letter-spacing=".16em">佐井通</text>
+  </g>
+
+  <g id="rail-labels">
+    <rect x="812" y="441" width="182" height="58" rx="29" fill="#FFFFFF" fill-opacity=".92"/>
+    <text class="jp" x="840" y="476" font-size="14" letter-spacing=".18em">JR嵯峨野線</text>
+  </g>
+
+  <g id="station-label">
+    <rect x="486" y="530" width="152" height="66" rx="18" fill="#FFFFFF" fill-opacity=".94"/>
+    <text class="serif" x="562" y="560" font-size="28" text-anchor="middle">JR Enmachi</text>
+    <text class="jp" x="562" y="584" font-size="13" text-anchor="middle" letter-spacing=".16em">JR円町駅</text>
+  </g>
+
+  <g id="hub-labels">
+    <rect x="252" y="566" width="146" height="62" rx="18" fill="#FFFFFF" fill-opacity=".92"/>
+    <text class="serif" x="272" y="596" font-size="25">moto-machi</text>
+    <text class="jp" x="272" y="618" font-size="12" letter-spacing=".12em">atelier garage</text>
+    <path class="guide" d="M398 596H420"/>
+
+    <rect x="728" y="548" width="150" height="62" rx="18" fill="#FFFFFF" fill-opacity=".92"/>
+    <text class="serif" x="748" y="578" font-size="25">yado-machi</text>
+    <text class="jp" x="748" y="600" font-size="12" letter-spacing=".12em">stay like a local</text>
+    <path class="guide" d="M708 586H728"/>
+  </g>
+
+  <g id="area-labels">
+    <rect x="188" y="176" width="138" height="54" rx="18" fill="#FFFFFF" fill-opacity=".82"/>
+    <text class="serif" x="212" y="206" font-size="24">Kitano</text>
+    <text class="jp" x="212" y="224" font-size="12" letter-spacing=".14em">北野方面</text>
+
+    <rect x="890" y="182" width="146" height="54" rx="18" fill="#FFFFFF" fill-opacity=".82"/>
+    <text class="serif" x="914" y="212" font-size="24">Hanazono</text>
+    <text class="jp" x="914" y="230" font-size="12" letter-spacing=".14em">花園方面</text>
+
+    <rect x="174" y="706" width="158" height="54" rx="18" fill="#FFFFFF" fill-opacity=".82"/>
+    <text class="serif" x="198" y="736" font-size="24">Nishinokyo</text>
+    <text class="jp" x="198" y="754" font-size="12" letter-spacing=".14em">西ノ京</text>
+
+    <rect x="852" y="706" width="154" height="54" rx="18" fill="#FFFFFF" fill-opacity=".82"/>
+    <text class="serif" x="876" y="736" font-size="24">Nijo side</text>
+    <text class="jp" x="876" y="754" font-size="12" letter-spacing=".14em">二条方面</text>
+  </g>
+
+  <g id="poi-labels">
+    <text class="jp" x="536" y="214" font-size="12" letter-spacing=".12em">西大路妙心寺道</text>
+    <text class="jp" x="678" y="300" font-size="12" letter-spacing=".12em">丸太町御前</text>
+    <text class="jp" x="344" y="300" font-size="12" letter-spacing=".12em">丸太町天神道</text>
+    <text class="jp" x="670" y="536" font-size="12" letter-spacing=".12em">西大路太子道</text>
+    <text class="jp" x="796" y="648" font-size="12" letter-spacing=".12em">西大路御池</text>
+  </g>
+
+  <g id="compass">
+    <circle cx="1018" cy="92" r="28" fill="#FFFFFF" fill-opacity=".94"/>
+    <path d="M1018 74L1024 92H1012L1018 74Z" fill="#4A5C4A"/>
+    <path d="M1018 110L1012 92H1024L1018 110Z" fill="#D7C8A7"/>
+    <text class="jp" x="1018" y="135" font-size="12" text-anchor="middle" letter-spacing=".2em">N</text>
+  </g>
+
+  <g id="scale">
+    <rect x="882" y="794" width="170" height="22" rx="11" fill="#FFFFFF" fill-opacity=".92"/>
+    <path d="M906 805H1012" stroke="#4A5C4A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M906 798V812" stroke="#4A5C4A" stroke-width="2" stroke-linecap="round"/>
+    <path d="M959 798V812" stroke="#4A5C4A" stroke-width="2" stroke-linecap="round"/>
+    <path d="M1012 798V812" stroke="#4A5C4A" stroke-width="2" stroke-linecap="round"/>
+    <text class="jp" x="900" y="784" font-size="11" letter-spacing=".12em">0</text>
+    <text class="jp" x="944" y="784" font-size="11" letter-spacing=".12em">500m</text>
+    <text class="jp" x="998" y="784" font-size="11" letter-spacing=".12em">1km</text>
+  </g>
+
+  <g id="legend">
+    <rect x="118" y="794" width="422" height="28" rx="14" fill="#FFFFFF" fill-opacity=".92"/>
+    <circle cx="144" cy="808" r="6.5" fill="#4A5C4A"/>
+    <text class="jp" x="158" y="812" font-size="11" letter-spacing=".08em">拠点</text>
+    <circle cx="228" cy="808" r="6.5" fill="#D7C8A7"/>
+    <text class="jp" x="242" y="812" font-size="11" letter-spacing=".08em">周辺ポイント</text>
+    <circle cx="352" cy="808" r="6.5" fill="#FFFFFF" stroke="#5F745F" stroke-width="2"/>
+    <text class="jp" x="366" y="812" font-size="11" letter-spacing=".08em">主要交差点</text>
+  </g>
+</svg>

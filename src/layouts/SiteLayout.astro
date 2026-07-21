@@ -1,0 +1,70 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  canonical?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
+  currentPath?: string;
+}
+
+const {
+  currentPath = '/',
+  ...meta
+} = Astro.props;
+
+const softPageFade = {
+  forwards: {
+    old: {
+      name: 'pageSoftFadeOut',
+      duration: '240ms',
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fillMode: 'both',
+    },
+    new: {
+      name: 'pageSoftFadeIn',
+      duration: '520ms',
+      delay: '20ms',
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fillMode: 'both',
+    },
+  },
+  backwards: {
+    old: {
+      name: 'pageSoftFadeOut',
+      duration: '240ms',
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fillMode: 'both',
+    },
+    new: {
+      name: 'pageSoftFadeIn',
+      duration: '520ms',
+      delay: '20ms',
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fillMode: 'both',
+    },
+  },
+};
+---
+
+<BaseLayout {...meta}>
+  <div class="min-h-screen flex flex-col">
+    <Header client:load currentPath={currentPath} />
+    <main
+      class="flex-1"
+      transition:name="page-content"
+      transition:animate={softPageFade}
+    >
+      <slot />
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>

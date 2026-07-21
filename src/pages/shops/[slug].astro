@@ -1,7 +1,10 @@
 ---
-import ShopDetail from '@/pages/ShopDetail';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from '@/components/Link';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getAllShops } from '../../lib/content';
+import { ArrowLeft, Clock, Globe, MapPin } from 'lucide-react';
 
 export async function getStaticPaths() {
   const shops = await getAllShops();
@@ -14,12 +17,144 @@ export async function getStaticPaths() {
 
 const shop = Astro.props.shop;
 const slug = shop?.frontmatter.slug ?? Astro.params.slug!;
+const baseUrl = Astro.site ?? Astro.url;
+const siteUrl = new URL('/', baseUrl).toString();
+const canonicalUrl = new URL(`/shops/${slug}`, baseUrl).toString();
+const shopImage = shop?.frontmatter.image
+  ? new URL(shop.frontmatter.image, baseUrl).toString()
+  : undefined;
+const sameAs = shop
+  ? [shop.frontmatter.website, shop.frontmatter.instagram].filter(Boolean)
+  : [];
+const shopStructuredData = shop
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': `${canonicalUrl}#business`,
+      name: shop.frontmatter.name,
+      description: shop.frontmatter.excerpt,
+      ...(shopImage ? { image: [shopImage] } : {}),
+      url: canonicalUrl,
+      areaServed: '円町',
+      ...(shop.frontmatter.address
+        ? {
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: shop.frontmatter.address,
+              addressLocality: '京都市',
+              addressRegion: '京都府',
+              addressCountry: 'JP',
+            },
+          }
+        : {}),
+      ...(sameAs.length > 0 ? { sameAs } : {}),
+      provider: {
+        '@id': `${siteUrl}#organization`,
+      },
+      mainEntityOfPage: canonicalUrl,
+    }
+  : undefined;
 ---
 
-<BaseLayout
+<SiteLayout
   title={shop?.frontmatter.name ?? '店舗情報'}
   description={shop?.frontmatter.excerpt}
   image={shop?.frontmatter.image}
+  structuredData={shopStructuredData}
+  currentPath={`/shops/${slug}`}
 >
-  <ShopDetail client:load currentPath={`/shops/${slug}`} shop={shop} />
-</BaseLayout>
+  {shop ? (
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <Breadcrumbs items={[{ label: 'お店を探す', href: '/shops' }, { label: shop.frontmatter.name }]} />
+
+      {shop.frontmatter.image && (
+        <div class="aspect-[16/9] overflow-hidden rounded-sm mb-8">
+          <img src={shop.frontmatter.image} alt={shop.frontmatter.name} class="w-full h-full object-cover" />
+        </div>
+      )}
+
+      <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 mb-3">
+        {(shop.frontmatter.categories.length > 0 ? shop.frontmatter.categories : [shop.frontmatter.category]).map((category) => (
+          <span class="px-2 py-0.5 bg-gray-100 rounded-full">{category}</span>
+        ))}
+        <span>{shop.frontmatter.area}</span>
+      </div>
+
+      <h1 class="text-2xl lg:text-3xl font-medium mb-4">{shop.frontmatter.name}</h1>
+      <p class="text-sm text-gray-600 mb-8">{shop.frontmatter.excerpt}</p>
+
+      <div class="bg-gray-50 rounded-sm p-5 mb-8 space-y-3">
+        {shop.frontmatter.address && (
+          <div class="flex items-start gap-3 text-sm">
+            <MapPin size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+            <span class="text-gray-700">{shop.frontmatter.address}</span>
+          </div>
+        )}
+        {shop.frontmatter.hours && (
+          <div class="flex items-start gap-3 text-sm">
+            <Clock size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+            <span class="text-gray-700">{shop.frontmatter.hours}</span>
+          </div>
+        )}
+        {shop.frontmatter.closed && (
+          <div class="flex items-start gap-3 text-sm">
+            <span class="text-gray-400 flex-shrink-0 w-3.5 text-center">休</span>
+            <span class="text-gray-700">{shop.frontmatter.closed}</span>
+          </div>
+        )}
+        {shop.frontmatter.website && (
+          <div class="flex items-start gap-3 text-sm">
+            <Globe size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
+            <a href={shop.frontmatter.website} target="_blank" rel="noopener noreferrer" class="text-[#4a5c4a] hover:underline">
+              公式サイト
+            </a>
+          </div>
+        )}
+        {shop.frontmatter.instagram && (
+          <div class="flex items-start gap-3 text-sm">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="mt-0.5 text-gray-400 flex-shrink-0"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+            <a href={shop.frontmatter.instagram} target="_blank" rel="noopener noreferrer" class="text-[#4a5c4a] hover:underline">
+              Instagram
+            </a>
+          </div>
+        )}
+      </div>
+
+      <MarkdownRenderer content={shop.content} />
+
+      <div class="mt-8 p-4 bg-amber-50 border border-amber-100 rounded-sm">
+        <p class="text-xs text-amber-800 leading-relaxed">
+          掲載情報は公開時点のものです。最新情報は各店舗・施設の公式情報をご確認ください。
+        </p>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-gray-100">
+        <Link href="/shops" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#4a5c4a] transition-colors">
+          <ArrowLeft size={14} />
+          お店一覧へ戻る
+        </Link>
+      </div>
+    </article>
+  ) : (
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+      <p class="text-gray-500">店舗情報が見つかりませんでした。</p>
+      <Link href="/shops" className="text-sm text-[#4a5c4a] mt-4 inline-block">
+        お店一覧へ戻る
+      </Link>
+    </div>
+  )}
+</SiteLayout>

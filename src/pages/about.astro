@@ -1,11 +1,94 @@
 ---
-import MachiHub from '@/pages/MachiHub';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import PageHeader from '@/components/PageHeader';
+import SiteLayout from '../layouts/SiteLayout.astro';
 ---
 
-<BaseLayout
+<SiteLayout
   title="machi-hubについて"
   description="en-machiを運営する株式会社machi-hubの紹介ページです。地域の暮らしと人をつなぐ拠点づくりについてご案内します。"
+  currentPath="/about"
 >
-  <MachiHub client:load currentPath="/machi-hub" />
-</BaseLayout>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <Breadcrumbs items={[{ label: 'machi-hubについて' }]} />
+    <PageHeader title="machi-hubについて" />
+
+    <div class="max-w-2xl space-y-8">
+      <section>
+        <h2 class="text-base font-medium mb-3">machi-hubとは</h2>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          株式会社machi-hubは、京都・円町エリアを拠点に、地域の暮らしと人をつなぐ事業を展開しています。
+          ものづくりの場、滞在の場、情報発信の場を通じて、まちの日常に新しい循環を生み出すことを目指しています。
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-base font-medium mb-4">運営する拠点</h2>
+        <div class="space-y-4">
+          <div class="p-5 border border-gray-100 rounded-sm">
+            <div class="mb-4 flex h-24 items-center justify-center overflow-hidden rounded-sm border border-[#4a5c4a]/10 bg-[#f8f7f5] px-5">
+              <img
+                src="/placeholders/moto-machi_mini.webp"
+                alt="moto-machi"
+                class="max-h-10 w-auto max-w-full object-contain"
+               
+              />
+            </div>
+            <h3 class="text-sm font-medium mb-1" style='font-family: Inter, sans-serif;'>moto-machi</h3>
+            <p class="text-xs text-gray-500 mb-2">アトリエガレージ・モトマチ</p>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              つくること、整えること、集うこと。地域にひらかれたアトリエガレージです。
+            </p>
+          </div>
+          <div class="p-5 border border-gray-100 rounded-sm" id="yado">
+            <div class="mb-4 flex h-24 items-center justify-center overflow-hidden rounded-sm border border-[#4a5c4a]/10 bg-[#f8f7f5] px-5">
+              <img
+                src="/placeholders/yado-machi_mini.webp"
+                alt="yado-machi"
+                class="max-h-10 w-auto max-w-full object-contain"
+              />
+            </div>
+            <h3 class="text-sm font-medium mb-1" style='font-family: Inter, sans-serif;'>yado-machi</h3>
+            <p class="text-xs text-gray-500 mb-2">一棟貸しの宿・ヤドマチ</p>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              暮らすように泊まる、京都の一棟貸し宿。円町の日常を旅の一部に。
+            </p>
+          </div>
+
+          <div class="p-5 border border-gray-100 rounded-sm"  >
+            <div class="mb-4 flex h-24 items-center justify-center overflow-hidden rounded-sm border border-[#4a5c4a]/10 bg-[#f8f7f5] px-5">
+              <img
+                src="/placeholders/en-machi_bymachihub.webp"
+                alt="en-machi by machi-hub"
+                class="max-h-12 w-auto max-w-full object-contain"
+              />
+            </div>
+            <h3 class="text-sm font-medium mb-1" style='font-family: Inter, sans-serif;'>en-machi</h3>
+            <p class="text-xs text-gray-500 mb-2">地域との接点</p>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              円町の人・店・場所・出来事をつなぐ、machi-hub運営のローカルポータルです。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-base font-medium mb-3">会社情報</h2>
+        <dl class="text-sm space-y-2">
+          <div class="flex gap-4">
+            <dt class="text-gray-500 w-24 flex-shrink-0">会社名</dt>
+            <dd class="text-gray-700">株式会社machi-hub</dd>
+          </div>
+          <div class="flex gap-4">
+            <dt class="text-gray-500 w-24 flex-shrink-0">所在地</dt>
+            <dd class="text-gray-700">〒602-8368<br>京都市上京区御前通西裏上ノ下立売上る北町580-4</dd>
+          </div>
+          <div class="flex gap-4">
+            <dt class="text-gray-500 w-24 flex-shrink-0">事業内容</dt>
+            <dd class="text-gray-700">地域メディア運営、宿泊施設運営、アトリエ運営</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  </div>
+</SiteLayout>

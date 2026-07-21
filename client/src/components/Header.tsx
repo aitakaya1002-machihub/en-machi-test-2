@@ -28,8 +28,7 @@ const navItems = [
   { label: "お店を探す", href: "/shops" },
   { label: "イベント", href: "/events" },
   { label: "ストーリー", href: "/stories" },
-  { label: "machi-hubについて", href: "/machi-hub" },
-  { label: "お知らせ", href: "/notices" },
+  { label: "machi-hubについて", href: "/about" },
 ];
 
 function isActivePath(href: string, currentPath: string) {
@@ -200,38 +199,53 @@ export default function Header({ currentPath = "/" }: RoutedPageProps) {
     }
   }, [isSearchOpen]);
 
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isMenuOpen]);
+
   return (
     <>
       <header
-        className={`sticky top-0 z-50 transition-all duration-200 ${scrolled ? "bg-white/98 backdrop-blur-md shadow-sm" : "bg-white"} border-b border-gray-100`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          isMenuOpen
+            ? "bg-white/95 backdrop-blur-xl border-b border-transparent shadow-none"
+            : scrolled
+              ? "bg-white/98 backdrop-blur-md shadow-sm border-b border-gray-100"
+              : "bg-white border-b border-gray-100"
+        }`}
       >
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Brand Mark */}
-            <Link href="/" className="flex items-center gap-2.5 group">
-              {/* 円 symbol mark */}
-              <div className="w-8 h-8 rounded-full border-2 border-[#4a5c4a] flex items-center justify-center transition-colors group-hover:bg-[#4a5c4a]/5">
-                <span
-                  className="text-[10px] font-bold text-[#4a5c4a]"
-                  style={{ fontFamily: '"Noto Serif JP", serif' }}
-                >
-                  円
-                </span>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="text-lg lg:text-xl font-semibold tracking-tight text-gray-900"
-                  style={{
-                    fontFamily: '"Noto Serif JP", serif',
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  en-machi
-                </span>
-                <span className="text-[9px] lg:text-[10px] text-[#4a5c4a] -mt-0.5 tracking-wider uppercase">
-                  by machi-hub
-                </span>
-              </div>
+            <Link href="/" className="group block">
+              <img
+                src="/placeholders/en-machi_bymachihub.webp"
+                alt="en-machi by machi-hub"
+                className="h-9 lg:h-11 w-auto transition-opacity group-hover:opacity-85"
+              />
             </Link>
 
             <nav className="hidden lg:flex items-center gap-8">
@@ -272,55 +286,129 @@ export default function Header({ currentPath = "/" }: RoutedPageProps) {
                 </span>
               </button>
               <button
-                className="lg:hidden p-2 hover:bg-gray-50 rounded-full transition-colors"
+                className={`lg:hidden p-2 rounded-full transition-all duration-300 ${
+                  isMenuOpen
+                    ? "bg-[#4a5c4a] text-white"
+                    : "hover:bg-gray-50 text-gray-700"
+                }`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="メニュー"
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu-overlay"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           </div>
         </div>
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-100 bg-white">
-            <nav className="max-w-[1280px] mx-auto px-4 py-4 space-y-1">
-              {navItems.map(item => (
+      </header>
+
+      <div
+        id="mobile-menu-overlay"
+        aria-hidden={!isMenuOpen}
+        className={`fixed inset-0 z-40 overflow-y-auto overscroll-y-contain bg-white/96 backdrop-blur-xl transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+          isMenuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+        style={{
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-y",
+        }}
+      >
+        <div className="min-h-[100dvh]">
+          <div
+            className={`mx-auto flex min-h-[100dvh] max-w-[1280px] flex-col px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-24 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              isMenuOpen ? "translate-y-0" : "translate-y-3"
+            }`}
+          >
+            <div className="mb-8">
+              <p className="text-[11px] uppercase tracking-[0.28em] text-[#4a5c4a]/50">
+                Menu
+              </p>
+            </div>
+
+            <nav className="flex flex-1 flex-col">
+              <div className="space-y-1">
+                {navItems.map((item, index) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`group flex items-center justify-between border-b border-[#4a5c4a]/10 py-4 text-lg transition-all duration-500 ${
+                      isActivePath(item.href, currentPath)
+                        ? "text-[#4a5c4a]"
+                        : "text-gray-900"
+                    } ${isMenuOpen ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+                    style={{ transitionDelay: `${120 + index * 45}ms` }}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: '"Noto Serif JP", serif' }}
+                    >
+                      {item.label}
+                    </span>
+                    <ArrowRight
+                      size={16}
+                      className="text-[#4a5c4a]/50 transition-transform group-hover:translate-x-1"
+                    />
+                  </Link>
+                ))}
+              </div>
+
+              <div
+                className={`mt-auto grid gap-3 pt-8 transition-all duration-500 ${
+                  isMenuOpen
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-3 opacity-0"
+                }`}
+                style={{ transitionDelay: "260ms" }}
+              >
+                <button
+                  type="button"
+                  className="flex items-center justify-between rounded-2xl border border-[#4a5c4a]/10 bg-white px-4 py-4 text-left shadow-sm transition-colors hover:bg-[#4a5c4a]/[0.03]"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setIsSearchOpen(true);
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <Search size={16} className="text-[#4a5c4a]" />
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">
+                        サイト内検索
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        記事・お店・イベントを探す
+                      </div>
+                    </div>
+                  </div>
+                  <ArrowRight size={16} className="text-[#4a5c4a]/50" />
+                </button>
+
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`block px-3 py-2.5 rounded-sm text-sm transition-colors ${
-                    isActivePath(item.href, currentPath)
-                      ? "bg-[#4a5c4a]/5 text-[#4a5c4a] font-medium"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
+                  href="/area"
+                  className="flex items-center justify-between rounded-2xl border border-[#4a5c4a]/10 bg-[#4a5c4a]/[0.04] px-4 py-4 text-left shadow-sm transition-colors hover:bg-[#4a5c4a]/[0.08]"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.label}
+                  <div className="flex items-center gap-3">
+                    <MapPin size={16} className="text-[#4a5c4a]" />
+                    <div>
+                      <div className="text-sm font-medium text-[#4a5c4a]">
+                        エリアマップ
+                      </div>
+                      <div className="text-xs text-[#4a5c4a]/70">
+                        円町の見どころを見る
+                      </div>
+                    </div>
+                  </div>
+                  <ArrowRight size={16} className="text-[#4a5c4a]/50" />
                 </Link>
-              ))}
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-sm"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setIsSearchOpen(true);
-                }}
-              >
-                <Search size={14} />
-                サイト内検索
-              </button>
-              <Link
-                href="/area"
-                className="flex items-center gap-2 px-3 py-2.5 text-sm text-[#4a5c4a] hover:bg-[#4a5c4a]/5 rounded-sm"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <MapPin size={14} />
-                エリアマップ
-              </Link>
+              </div>
             </nav>
           </div>
-        )}
-      </header>
+        </div>
+      </div>
 
       <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <DialogContent className="max-w-2xl overflow-hidden p-0">

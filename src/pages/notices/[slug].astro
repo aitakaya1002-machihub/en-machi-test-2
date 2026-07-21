@@ -1,7 +1,10 @@
 ---
-import NoticeDetail from '@/pages/NoticeDetail';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from '@/components/Link';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getAllNotices } from '../../lib/content';
+import { ArrowLeft } from 'lucide-react';
 
 export async function getStaticPaths() {
   const notices = await getAllNotices();
@@ -14,12 +17,61 @@ export async function getStaticPaths() {
 
 const notice = Astro.props.notice;
 const slug = notice?.frontmatter.slug ?? Astro.params.slug!;
+const baseUrl = Astro.site ?? Astro.url;
+const siteUrl = new URL('/', baseUrl).toString();
+const canonicalUrl = new URL(`/notices/${slug}`, baseUrl).toString();
+const noticeStructuredData = notice
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      '@id': `${canonicalUrl}#article`,
+      headline: notice.frontmatter.title,
+      description: notice.frontmatter.excerpt,
+      datePublished: notice.frontmatter.date,
+      articleSection: notice.frontmatter.category,
+      publisher: {
+        '@id': `${siteUrl}#organization`,
+      },
+      mainEntityOfPage: canonicalUrl,
+      inLanguage: 'ja-JP',
+    }
+  : undefined;
 ---
 
-<BaseLayout
+<SiteLayout
   title={notice?.frontmatter.title ?? 'お知らせ'}
   description={notice?.frontmatter.excerpt}
   type="article"
+  publishedTime={notice?.frontmatter.date}
+  structuredData={noticeStructuredData}
+  currentPath={`/notices/${slug}`}
 >
-  <NoticeDetail client:load currentPath={`/notices/${slug}`} notice={notice} />
-</BaseLayout>
+  {notice ? (
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <Breadcrumbs items={[{ label: 'お知らせ', href: '/notices' }, { label: notice.frontmatter.title }]} />
+
+      <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+        <span>{notice.frontmatter.date}</span>
+        <span class="px-2 py-0.5 bg-gray-100 rounded-full">{notice.frontmatter.category}</span>
+      </div>
+
+      <h1 class="text-2xl lg:text-3xl font-medium mb-8">{notice.frontmatter.title}</h1>
+
+      <MarkdownRenderer content={notice.content} />
+
+      <div class="mt-12 pt-8 border-t border-gray-100">
+        <Link href="/notices" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#4a5c4a] transition-colors">
+          <ArrowLeft size={14} />
+          お知らせ一覧へ戻る
+        </Link>
+      </div>
+    </article>
+  ) : (
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+      <p class="text-gray-500">お知らせが見つかりませんでした。</p>
+      <Link href="/notices" className="text-sm text-[#4a5c4a] mt-4 inline-block">
+        お知らせ一覧へ戻る
+      </Link>
+    </div>
+  )}
+</SiteLayout>

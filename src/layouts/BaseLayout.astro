@@ -1,6 +1,17 @@
 ---
 import '@/index.css';
-import { DEFAULT_DESCRIPTION, buildPageTitle, SITE_NAME } from '../lib/seo';
+import { ClientRouter } from 'astro:transitions';
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_SOCIAL_IMAGE,
+  DEFAULT_SOCIAL_IMAGE_ALT,
+  ORGANIZATION_LOGO,
+  ORGANIZATION_NAME,
+  buildPageTitle,
+  normalizeIsoDate,
+  toAbsoluteUrl,
+  SITE_NAME,
+} from '../lib/seo';
 import { getSearchItems } from '../lib/search-index';
 
 interface Props {
@@ -9,6 +20,10 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   noindex?: boolean;
+  canonical?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
 const {
@@ -17,12 +32,26 @@ const {
   image,
   type = 'website',
   noindex = false,
+  canonical,
+  publishedTime,
+  modifiedTime,
+  structuredData,
 } = Astro.props;
 
 const pageTitle = buildPageTitle(title);
 const baseUrl = Astro.site ?? Astro.url;
-const canonicalUrl = new URL(Astro.url.pathname, baseUrl).toString();
-const metaImage = image ? new URL(image, baseUrl).toString() : undefined;
+const siteUrl = Astro.site ? Astro.site.toString() : new URL('/', Astro.url).toString();
+const siteOrigin = siteUrl.replace(/\/$/, '');
+const canonicalUrl = canonical
+  ? toAbsoluteUrl(canonical, baseUrl)
+  : new URL(Astro.url.pathname, baseUrl).toString();
+const metaImage = image
+  ? toAbsoluteUrl(image, baseUrl)
+  : toAbsoluteUrl(DEFAULT_SOCIAL_IMAGE, baseUrl);
+const metaImageAlt = image && title ? title : DEFAULT_SOCIAL_IMAGE_ALT;
+const robotsContent = noindex
+  ? 'noindex, nofollow'
+  : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 const analyticsEndpoint =
   (import.meta.env['PUBLIC_ANALYTICS_ENDPOINT'] as string | undefined) ??
   (import.meta.env['VITE_ANALYTICS_ENDPOINT'] as string | undefined);
@@ -31,6 +60,53 @@ const analyticsWebsiteId =
   (import.meta.env['VITE_ANALYTICS_WEBSITE_ID'] as string | undefined);
 const searchItems = await getSearchItems();
 const serializedSearchItems = JSON.stringify(searchItems).replace(/</g, '\\u003c');
+const defaultStructuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${siteOrigin}#organization`,
+    name: ORGANIZATION_NAME,
+    alternateName: SITE_NAME,
+    url: siteUrl,
+    logo: {
+      '@type': 'ImageObject',
+      url: toAbsoluteUrl(ORGANIZATION_LOGO, baseUrl),
+    },
+    description: DEFAULT_DESCRIPTION,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${siteOrigin}#website`,
+    url: siteUrl,
+    name: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    inLanguage: 'ja-JP',
+    publisher: {
+      '@id': `${siteOrigin}#organization`,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${canonicalUrl}#webpage`,
+    url: canonicalUrl,
+    name: pageTitle,
+    description,
+    inLanguage: 'ja-JP',
+    isPartOf: {
+      '@id': `${siteOrigin}#website`,
+    },
+    ...(metaImage ? { image: [metaImage] } : {}),
+  },
+];
+const structuredDataItems = [
+  ...defaultStructuredData,
+  ...(structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : []),
+];
+const serializedStructuredData = JSON.stringify(structuredDataItems).replace(/</g, '\\u003c');
+const publishedTimeIso = normalizeIsoDate(publishedTime);
+const modifiedTimeIso = normalizeIsoDate(modifiedTime);
 ---
 
 <!doctype html>
@@ -40,16 +116,26 @@ const serializedSearchItems = JSON.stringify(searchItems).replace(/</g, '\\u003c
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={SITE_NAME} />
+    <meta name="theme-color" content="#f8f7f5" />
+    <meta name="robots" content={robotsContent} />
+    <meta name="googlebot" content={robotsContent} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:url" content={canonicalUrl} />
-    <meta name="twitter:card" content={metaImage ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={metaImage} />
+    <meta property="og:image:alt" content={metaImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={metaImage} />
+    <meta name="twitter:image:alt" content={metaImageAlt} />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="ja-JP" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -57,9 +143,18 @@ const serializedSearchItems = JSON.stringify(searchItems).replace(/</g, '\\u003c
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    {metaImage && <meta property="og:image" content={metaImage} />}
-    {metaImage && <meta name="twitter:image" content={metaImage} />}
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <ClientRouter />
+    {type === 'article' && publishedTimeIso && (
+      <meta property="article:published_time" content={publishedTimeIso} />
+    )}
+    {type === 'article' && modifiedTimeIso && (
+      <meta property="article:modified_time" content={modifiedTimeIso} />
+    )}
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={serializedStructuredData}
+    ></script>
   </head>
   <body>
     <slot />

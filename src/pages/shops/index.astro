@@ -1,14 +1,55 @@
 ---
-import Shops from '@/pages/Shops';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ContentFilter from '@/components/ContentFilter';
+import PageHeader from '@/components/PageHeader';
+import ShopCard from '@/components/ShopCard';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getAllShops } from '../../lib/content';
 
 const shops = await getAllShops();
+const categories = Array.from(
+  new Set(
+    shops.flatMap((shop) =>
+      shop.frontmatter.categories.length > 0
+        ? shop.frontmatter.categories
+        : [shop.frontmatter.category],
+    ),
+  ),
+);
+const sortedShops = [...shops].sort(
+  (a, b) => (b.frontmatter.featured ? 1 : 0) - (a.frontmatter.featured ? 1 : 0),
+);
+
+function getShopFilterValues(shop: (typeof shops)[number]) {
+  return shop.frontmatter.categories.length > 0
+    ? shop.frontmatter.categories.join('||')
+    : shop.frontmatter.category;
+}
 ---
 
-<BaseLayout
+<SiteLayout
   title="お店を探す"
   description="円町エリアのお店をご紹介します。飲食店や小売店など、地域のおすすめを探せます。"
+  currentPath="/shops"
 >
-  <Shops client:load currentPath="/shops" shops={shops} />
-</BaseLayout>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <Breadcrumbs items={[{ label: 'お店を探す' }]} />
+    <PageHeader
+      title="お店を探す"
+      description="円町エリアのお店をご紹介します。"
+    />
+    <ContentFilter client:load scopeId="shops-filter-scope" categories={categories} />
+    <div id="shops-filter-scope">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {sortedShops.map((item) => (
+          <div data-filter-item data-filter-values={getShopFilterValues(item)}>
+            <ShopCard shop={item.frontmatter} />
+          </div>
+        ))}
+      </div>
+      <div data-filter-empty hidden class="mt-8 rounded-sm border border-dashed border-gray-200 bg-gray-50 px-5 py-8 text-sm text-gray-500">
+        該当するお店はありません。
+      </div>
+    </div>
+  </div>
+</SiteLayout>

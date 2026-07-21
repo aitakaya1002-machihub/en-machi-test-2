@@ -1,14 +1,38 @@
 ---
-import Events from '@/pages/Events';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ContentFilter from '@/components/ContentFilter';
+import EventCard from '@/components/EventCard';
+import PageHeader from '@/components/PageHeader';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getAllEvents } from '../../lib/content';
 
 const events = await getAllEvents();
+const categories = Array.from(new Set(events.map((event) => event.frontmatter.category)));
 ---
 
-<BaseLayout
+<SiteLayout
   title="イベント"
   description="円町エリアで開催されるイベント情報の一覧です。"
+  currentPath="/events"
 >
-  <Events client:load currentPath="/events" events={events} />
-</BaseLayout>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <Breadcrumbs items={[{ label: 'イベント' }]} />
+    <PageHeader
+      title="イベント"
+      description="円町エリアで開催されるイベント情報です。"
+    />
+    <ContentFilter client:load scopeId="events-filter-scope" categories={categories} />
+    <div id="events-filter-scope">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {events.map((item) => (
+          <div data-filter-item data-filter-values={item.frontmatter.category}>
+            <EventCard event={item.frontmatter} />
+          </div>
+        ))}
+      </div>
+      <div data-filter-empty hidden class="mt-8 rounded-sm border border-dashed border-gray-200 bg-gray-50 px-5 py-8 text-sm text-gray-500">
+        該当するイベントはありません。
+      </div>
+    </div>
+  </div>
+</SiteLayout>

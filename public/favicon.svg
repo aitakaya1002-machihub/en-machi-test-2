@@ -1,5 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#ffffff"/>
-  <circle cx="32" cy="32" r="23" fill="none" stroke="#4a5c4a" stroke-width="4"/>
-  <text x="32" y="40" text-anchor="middle" font-size="22" font-family="'Noto Serif JP', serif" font-weight="700" fill="#4a5c4a">円</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_1" xmlns="http://www.w3.org/2000/svg" width="64" height="64" version="1.1" viewBox="0 0 64 64">
+  <!-- Generator: Adobe Illustrator 30.6.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 109)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <rect class="st0" width="64" height="64"/>
+  <path d="M14.82,33.4c1.38,4.43,7.35,4.72,11.8,1.97,1.22.83,2.31,1.9,3.17,3.31-4.53,2.93-9.91,3.65-14.62,1.47-3.82-1.77-5.55-5.61-4.88-9.69.86-5.16,5.58-7.92,10.66-7.87,5.98.06,10.34,4.49,9.55,10.76l-15.68.05ZM25.82,29.62c-1.57-2.95-3.81-3-5.93-2.99-1.89,0-3.82.87-4.78,3.11l10.71-.11h0Z"/>
+  <path d="M39.79,30.66l-.24,10.25h-4.78l.03-18.03,3.81,1.19c2.8-1.33,5.89-2.01,9.03-.92,7.83,2.72,5.98,9.88,6.09,17.75l-4.74.04-.24-10.44c-.05-2.01-2.91-3.02-4.44-3.03s-4.47.98-4.52,3.19Z"/>
 </svg>
